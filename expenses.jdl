@@ -1,23 +1,24 @@
 application {
   config {
-    baseName blog
+    baseName Expenses
     applicationType monolith
     authenticationType jwt
-    packageName com.jhipster.demo.blog
+    packageName com.jhipster.demo.expenses
     prodDatabaseType mysql
     cacheProvider ehcache
     buildTool maven
     clientFramework angular
     testFrameworks [cypress]
   }
-  entities Task
+  entities Expenses
 }
 
-entity Task {
+entity Expenses {
   description String required maxlength(200)
-  completed Boolean required
-  createdAt Instant required
-  targetDate Instant
+  amount BigDecimal required
+  date Instant required
 }
 
-dto Task with mapstruct
+dto Expenses with mapstruct
+service Expenses with serviceClass
+paginate Expenses with pagination
