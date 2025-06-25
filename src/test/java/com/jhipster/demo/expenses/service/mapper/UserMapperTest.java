@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.jhipster.demo.expenses.domain.User;
 import com.jhipster.demo.expenses.service.dto.AdminUserDTO;
 import com.jhipster.demo.expenses.service.dto.UserDTO;
+import com.jhipster.demo.expenses.service.mapper.UserMapper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

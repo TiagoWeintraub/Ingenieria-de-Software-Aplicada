@@ -7,6 +7,7 @@ import com.jhipster.demo.expenses.IntegrationTest;
 import com.jhipster.demo.expenses.config.Constants;
 import com.jhipster.demo.expenses.domain.User;
 import com.jhipster.demo.expenses.repository.UserRepository;
+import com.jhipster.demo.expenses.service.UserService;
 import com.jhipster.demo.expenses.service.dto.AdminUserDTO;
 import java.time.Instant;
 import java.time.LocalDateTime;
