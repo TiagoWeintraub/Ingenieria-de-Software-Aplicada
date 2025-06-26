@@ -52,27 +52,25 @@ Ejecutarlo en consola:
 
 - docker build -t expenses:latest .
 
-3. Ejecutamos el compose:
+3. Para levantar el compose:
 
-- docker compose up -d
+- docker compose up
+
+Para tirarlo:
+
+- docker-compose down
 
 4. Para verificar el estado de los contenedores:
 
 - docker ps
 
-5. Para tirar el compose:
-
-- docker-compose down
+5. Para
 
 ### Logstasb
 
-Ver logs de la aplicación:
+Ver logs de la aplicación desde la app como admin
 
-- docker logs expenses-app-1
-
-Acceder a la app:
-
-- http://localhost:8080
+### Kibana
 
 Acceder a kibana:
 
