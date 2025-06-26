@@ -42,12 +42,38 @@ Ejecutarlo en consola:
 
 - npm run e2e:headless -- --spec "src/test/javascript/cypress/e2e/expenses-e2e-custom.cy.ts"
 
-#### DOCKER
+#### DEPLOY EN DOCKER
 
-Creamos el Dockerfile y le hacemos el build:
+1. Primero debo compilar el proyecto y generar el JAR
 
-- docker build -t expenses:0.0.1 .
+- ./mvnw clean package -DskipTests
 
-Ejecutamos el contenedor:
+2. Creamos el Dockerfile y le hacemos el build:
 
-- docker run -p 8080:8080 expenses:0.0.1
+- docker build -t expenses:latest .
+
+3. Ejecutamos el compose:
+
+- docker compose up -d
+
+4. Para verificar el estado de los contenedores:
+
+- docker ps
+
+5. Para tirar el compose:
+
+- docker-compose down
+
+### Logstasb
+
+Ver logs de la aplicación:
+
+- docker logs expenses-app-1
+
+Acceder a la app:
+
+- http://localhost:8080
+
+Acceder a kibana:
+
+- http://localhost:5601/status

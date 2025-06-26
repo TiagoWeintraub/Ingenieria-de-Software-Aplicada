@@ -66,7 +66,7 @@ jhipster:
     logstash:
       enabled: false
       host: localhost
-      port: 5000
+      port: 5044
       queue-size: 512
   security:
     authentication:
