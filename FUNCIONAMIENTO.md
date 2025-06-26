@@ -41,3 +41,13 @@ Ejecutarlo con interfaz grafica:
 Ejecutarlo en consola:
 
 - npm run e2e:headless -- --spec "src/test/javascript/cypress/e2e/expenses-e2e-custom.cy.ts"
+
+#### DOCKER
+
+Creamos el Dockerfile y le hacemos el build:
+
+- docker build -t expenses:0.0.1 .
+
+Ejecutamos el contenedor:
+
+- docker run -p 8080:8080 expenses:0.0.1

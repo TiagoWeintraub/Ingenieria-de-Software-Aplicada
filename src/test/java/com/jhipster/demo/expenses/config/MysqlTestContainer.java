@@ -23,6 +23,7 @@ public class MysqlTestContainer implements SqlTestContainer {
     }
 
     @Override
+    @SuppressWarnings("resource") // MySQLContainer is properly closed in destroy() method
     public void afterPropertiesSet() {
         if (null == mysqlContainer) {
             mysqlContainer =
