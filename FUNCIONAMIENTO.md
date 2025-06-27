@@ -11,10 +11,11 @@
 Ruta: /src/test/java/com/jhipster/demo/expenses/service/ExpensesServiceTest.java
 
 # Para Ejecutar los Tests
+ Tests locales (con Docker corriendo en paralelo)
 
 - ./mvnw test -Dtest=ExpensesServiceTest
 
-## O de forma individual
+## Tests individuales
 
 Test para verificar que se crea correctamente un gasto
 
