@@ -1,3 +1,8 @@
+# RUTA DEL PROYECTO
+
+- cd /Users/tiago/Documents/GitHub/Ingenieria-de-Software-Aplicada
+
+
 # Para importar el jdl:
 
 - jhipster import-jdl expenses.jdl
