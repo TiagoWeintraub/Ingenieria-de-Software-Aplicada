@@ -67,7 +67,8 @@
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
     <logger name="org.springframework" level="WARN"/>
-    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.web.servlet.DispatcherServlet" level="DEBUG"/>
     <logger name="org.springframework.security" level="WARN"/>
     <logger name="org.springframework.cache" level="WARN"/>
     <logger name="org.thymeleaf" level="WARN"/>
@@ -77,6 +78,12 @@
     <logger name="liquibase" level="WARN"/>
     <logger name="LiquibaseSchemaResolver" level="INFO"/>
     <logger name="sun.rmi.transport" level="WARN"/>
+
+    <!-- Logging específico para la aplicación Expenses -->
+    <logger name="com.jhipster.demo.expenses" level="DEBUG"/>
+    <logger name="com.jhipster.demo.expenses.web.rest" level="DEBUG"/>
+    <logger name="com.jhipster.demo.expenses.service" level="DEBUG"/>
+    <logger name="com.jhipster.demo.expenses.repository" level="DEBUG"/>
 
     <!-- jhipster-needle-logback-add-log -->
 </configuration>
