@@ -22,7 +22,9 @@ node {
     }
 
     stage('npm install') {
-        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm"
+        withEnv(['PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true']) {
+            sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm"
+        }
     }
     stage('backend tests') {
         try {
