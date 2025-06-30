@@ -10,19 +10,25 @@ node {
     }
 
     stage('clean') {
-        sh "chmod +x mvnw"
-        sh "./mvnw -ntp clean -P-webapp"
+        withEnv(['JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64', 'PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin']) {
+            sh "chmod +x mvnw"
+            sh "./mvnw -ntp clean -P-webapp"
+        }
     }
     stage('nohttp') {
-        sh "./mvnw -ntp checkstyle:check"
+        withEnv(['JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64', 'PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin']) {
+            sh "./mvnw -ntp checkstyle:check"
+        }
     }
 
     stage('install tools') {
-        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:install-node-and-npm@install-node-and-npm -X"
+        withEnv(['JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64', 'PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin']) {
+            sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:install-node-and-npm@install-node-and-npm -X"
+        }
     }
 
     stage('npm install') {
-        withEnv(['PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true']) {
+        withEnv(['JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64', 'PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin', 'PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true']) {
             sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm"
         }
     }
