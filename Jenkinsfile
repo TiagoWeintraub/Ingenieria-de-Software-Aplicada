@@ -47,8 +47,10 @@ node {
     }
 
     stage('packaging') {
-        sh "./mvnw -ntp verify -P-webapp -Pprod -DskipTests"
-        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        withEnv(['NODE_OPTIONS=--max_old_space_size=2048']) {
+            sh "./mvnw -ntp verify -P-webapp -Pprod -DskipTests"
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        }
     }
 
     def dockerImage
