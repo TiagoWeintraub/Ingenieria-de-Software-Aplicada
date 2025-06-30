@@ -85,7 +85,10 @@ Acceder a kibana:
 
 ### JENKINS
 
-docker container run -d --name jenkins -p 8090:8080 -p 50000:50000 jenkins/jenkins
+Uso mi propio contenedor jenkins arm
+docker build -t jenkins-arm-java17 .
+
+docker run -d --name jenkins -p 8090:8080 -p 50000:50000 jenkins-arm-java17
 
 docker exec -it jenkins bash
 cd /var/jenkins_home/secrets/
