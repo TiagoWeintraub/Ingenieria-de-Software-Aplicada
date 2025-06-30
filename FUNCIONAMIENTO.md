@@ -81,3 +81,20 @@ Ver logs de la aplicación desde la app como admin
 Acceder a kibana:
 
 - http://localhost:5601/status
+
+
+### JENKINS
+
+docker container run -d --name jenkins -p 8090:8080 -p 50000:50000 jenkins/jenkins
+
+docker exec -it jenkins bash
+cd /var/jenkins_home/secrets/
+cat initialAdminPassword
+Es esta: e3acdbf47f154ddaa7fad7ae7330b8be
+
+Ingresar a localhost:8090 y colocar la password.
+
+
+Instalar los plugins sugeridos.
+
+Configuramos una tarea en Jenkins:

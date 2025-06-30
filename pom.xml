@@ -600,6 +600,17 @@
                             </platforms>
                         </from>
                         <to>
+                            <image>tiagoweintraub/isa-final:latest</image>
+                            <tags>
+                                <tag>${project.version}</tag>
+                                <tag>latest</tag>
+                            </tags>
+                            <auth>
+                                <username>${DOCKER_REGISTRY_USER}</username>
+                                <password>${DOCKER_REGISTRY_PWD}</password>
+                            </auth>
+                        </to>
+                        <to>
                             <image>expenses:latest</image>
                         </to>
                         <container>
@@ -937,6 +948,7 @@
                 <dependency>
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
+                    <version>2.2.224</version>
                 </dependency>
             </dependencies>
             <build>
@@ -1026,6 +1038,7 @@
                                 <dependency>
                                     <groupId>com.h2database</groupId>
                                     <artifactId>h2</artifactId>
+                                    <version>2.2.224</version>
                                 </dependency>
                             </dependencies>
                         </plugin>
