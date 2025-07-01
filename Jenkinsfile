@@ -18,47 +18,42 @@ node {
     }
 
     stage('install tools') {
-        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:install-node-and-npm@install-node-and-npm -X"
+        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:install-node-and-npm@install-node-and-npm"
     }
 
     stage('npm install') {
-        withEnv(['PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true']) {
-            sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm"
-        }
+        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm"
     }
     stage('backend tests') {
-        // try {
-        //     sh "./mvnw -ntp verify -P-webapp"
-        // } catch(err) {
-        //     throw err
-        // } finally {
-        //     junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/TEST-*.xml'
-        // }
+        try {
+            sh "./mvnw -ntp verify -P-webapp"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/TEST-*.xml'
+        }
     }
 
     stage('frontend tests') {
-        // try {
-        //     sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm -Dfrontend.npm.arguments='run test'"
-        // } catch(err) {
-        //     throw err
-        // } finally {
-        //     junit '**/target/test-results/TESTS-results-jest.xml'
-        // }
+        try {
+            sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm -Dfrontend.npm.arguments='run test'"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/test-results/TESTS-results-jest.xml'
+        }
     }
 
     stage('packaging') {
-        withEnv(['NODE_OPTIONS=--max_old_space_size=2048']) {
-            sh "./mvnw -ntp verify -P-webapp -Pprod -DskipTests"
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-        }
+        sh "./mvnw -ntp verify -P-webapp -Pprod -DskipTests"
+        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
     }
-
     def dockerImage
+
     stage('publish docker') {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'DOCKER_REGISTRY_PWD', usernameVariable: 'DOCKER_REGISTRY_USER')]) {
-            sh "echo $DOCKER_REGISTRY_PWD | docker login -u $DOCKER_REGISTRY_USER --password-stdin"
-            sh "docker build -t $DOCKER_REGISTRY_USER/expenses:latest ."
-            sh "docker push $DOCKER_REGISTRY_USER/expenses:latest"
-        }
+    withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable:
+    'DOCKER_REGISTRY_PWD', usernameVariable: 'DOCKER_REGISTRY_USER')]) {
+     sh "./mvnw -ntp jib:build"
+        }  
     }
 }
