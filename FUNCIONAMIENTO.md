@@ -1,6 +1,6 @@
 # RUTA DEL PROYECTO
 
-- cd /Users/tiago/Documents/GitHub/Ingenieria-de-Software-Aplicada
+- cd /Users/tiago/Documents/GitHub/Final-Ing-Sof-Aplicada/Ingenieria-de-Software-Aplicada/
 
 
 # Para importar el jdl:
@@ -38,7 +38,7 @@ Test para verificar que no se crea el gasto si la descripción está vacía
 
 Ir a la carpeta
 
-- cd /Users/tiago/Documents/GitHub/Ingenieria-de-Software-Aplicada
+- cd /Users/tiago/Documents/GitHub/Final-Ing-Sof-Aplicada/Ingenieria-de-Software-Aplicada/
 
 Ejecutarlo con interfaz grafica:
 
