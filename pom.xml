@@ -25,7 +25,7 @@
     <properties>
         <!-- Build properties -->
         <maven.version>3.2.5</maven.version>
-        <java.version>11</java.version>
+        <java.version>21</java.version>
         <node.version>v16.17.0</node.version>
         <npm.version>8.19.1</npm.version>
 
@@ -688,8 +688,8 @@
                                 <version>[${maven.version},)</version>
                             </requireMavenVersion>
                             <requireJavaVersion>
-                                <message>You are running an incompatible version of Java. JHipster supports JDK 11 to 18.</message>
-                                <version>[11,12),[12,13),[13,14),[14,15),[15,16),[16,17),[17,18),[18,19)</version>
+                                <message>You are running an incompatible version of Java. JHipster supports JDK 11 to 21.</message>
+                                <version>[11,12),[12,13),[13,14),[14,15),[15,16),[16,17),[17,18),[18,19),[19,20),[20,21),[21,22)</version>
                             </requireJavaVersion>
                         </rules>
                     </configuration>
