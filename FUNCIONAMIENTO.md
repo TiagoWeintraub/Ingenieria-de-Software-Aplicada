@@ -103,7 +103,7 @@ Pasos:
 1. docker exec -it jenkins bash
 2. cd /var/jenkins_home/secrets/
 3. cat initialAdminPassword
-La pass es: b66bc0866fdf471c8caa3db878ded648
+Copiar la contraseña que imprime el comando.
 
 Ingresar a localhost:8090 y colocar la password.
 
