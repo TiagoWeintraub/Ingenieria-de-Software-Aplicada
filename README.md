@@ -1,261 +1,205 @@
-# Expenses
+# Expenses: JHipster App with CI/CD and ELK Logging
 
-This application was generated using JHipster 7.9.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v7.9.3](https://www.jhipster.tech/documentation-archive/v7.9.3).
+Expense-tracking web app (Spring Boot + Angular) with Docker, a Jenkins CI/CD pipeline and centralized logging on the ELK stack.  
+Aplicación web de registro de gastos (Spring Boot + Angular) con Docker, pipeline CI/CD en Jenkins y logging centralizado con ELK.
 
-## Project Structure
+![Java](https://img.shields.io/badge/Java_17-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot_2.7-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular_14-DD0031?style=flat-square&logo=angular&logoColor=white)
+![JHipster](https://img.shields.io/badge/JHipster_7.9.3-3E8ACC?style=flat-square&logo=jhipster&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat-square&logo=apachemaven&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=jenkins&logoColor=white)
+![Elastic Stack](https://img.shields.io/badge/ELK_7.17-005571?style=flat-square&logo=elasticstack&logoColor=white)
+![Cypress](https://img.shields.io/badge/Cypress-17202C?style=flat-square&logo=cypress&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white)
+![SonarQube](https://img.shields.io/badge/SonarQube-4E9BCD?style=flat-square&logo=sonarqube&logoColor=white)
 
-Node is required for generation and recommended for development. `package.json` is always generated for a better development experience with prettier, commit hooks, scripts and so on.
+[English](#english) · [Español](#español)
 
-In the project root, JHipster generates configuration files for tools like git, prettier, eslint, husky, and others that are well known and you can find references in the web.
+## English
 
-`/src/*` structure follows default Java structure.
+### About
+Final project for **Ingeniería de Software Aplicada** (Applied Software Engineering) at Universidad de Mendoza, Argentina (2025). The application was generated with JHipster 7.9.3 from a JDL model ([`expenses.jdl`](expenses.jdl)), then extended with the delivery and quality tooling around it: custom unit and E2E tests, a Docker Compose stack with MySQL and ELK, JSON log shipping to Logstash, and a Jenkins pipeline that builds the app and pushes its Docker image to Docker Hub.
 
-- `.yo-rc.json` - Yeoman configuration file
-  JHipster configuration is stored in this file at `generator-jhipster` key. You may find `generator-jhipster-*` for specific blueprints configuration.
-- `.yo-resolve` (optional) - Yeoman conflict resolver
-  Allows to use a specific action when conflicts are found skipping prompts for files that matches a pattern. Each line should match `[pattern] [action]` with pattern been a [Minimatch](https://github.com/isaacs/minimatch#minimatch) pattern and action been one of skip (default if ommited) or force. Lines starting with `#` are considered comments and are ignored.
-- `.jhipster/*.json` - JHipster entity configuration files
+### Features
+- **Expenses CRUD**: description (required, max 200 chars), amount and date. REST API under `/api/expenses` (paginated list, get, create, update, partial update, delete) plus Angular list, detail, create/edit and delete screens.
+- **JWT authentication**: login, registration, account activation and password reset. `/api/admin/**` is restricted to admins; the rest of `/api/**` requires a valid token.
+- **Admin UI**: user management, metrics, health, configuration, log levels and Swagger API docs.
+- **Versioned schema**: Liquibase changelogs, with sample data loaded in the `dev` profile.
+- **Centralized logging**: JSON logs over TCP to Logstash, tagged by `log_type` (application / framework / database / system) and indexed daily in Elasticsearch (`expenses-logs-YYYY.MM.dd`), viewable in Kibana.
+- **Containerized delivery**: Dockerfile, Docker Compose stack with healthchecks, and a Jib-built image published by Jenkins.
 
-- `npmw` - wrapper to use locally installed npm.
-  JHipster installs Node and npm locally using the build tool by default. This wrapper makes sure npm is installed locally and uses it avoiding some differences different versions can cause. By using `./npmw` instead of the traditional `npm` you can configure a Node-less environment to develop or test your application.
-- `/src/main/docker` - Docker configurations for the application and services that the application depends on
+### Tech stack
+| Area | Technologies |
+|---|---|
+| Backend | Java 17, Spring Boot 2.7 (Web, Security, Data JPA), JWT, MapStruct, Ehcache, Liquibase, springdoc |
+| Frontend | Angular 14, TypeScript, Bootstrap 5 |
+| Database | MySQL 8 (prod / Docker), H2 (dev) |
+| DevOps | Maven Wrapper, Docker, Docker Compose, Jib, Jenkins |
+| Observability | Logback Logstash appender, Logstash, Elasticsearch, Kibana 7.17 |
+| Testing & quality | JUnit 5, Mockito, AssertJ, ArchUnit, Testcontainers, Jest, Cypress, Checkstyle (nohttp), SonarQube |
 
-## Development
-
-Before you can build this project, you must install and configure the following dependencies on your machine:
-
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
-
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
-
+### Architecture / Project structure
 ```
-npm install
+Angular SPA ──JWT──> REST API (/api/expenses) ──> ExpensesService (DTO <-> entity, MapStruct) ──> JPA ──> MySQL / H2
+Logback (JSON over TCP) ──> Logstash :5044 ──> Elasticsearch :9200 ──> Kibana :5601
 ```
-
-We use npm scripts and [Angular CLI][] with [Webpack][] as our build system.
-
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
-
 ```
-./mvnw
-npm start
+├── expenses.jdl                     # JDL domain model (entity, DTO, service, pagination)
+├── src/main/java/.../expenses/      # Spring Boot: domain, repository, service, web/rest, security/jwt
+├── src/main/webapp/app/             # Angular SPA (entities/expenses, admin, account)
+├── src/main/resources/              # Spring profiles, Liquibase changelogs, logback-spring-elk.xml
+├── src/main/docker/logstash/        # Logstash settings and pipeline
+├── src/test/                        # JUnit tests (incl. ExpensesServiceTest) and Cypress specs
+├── scripts/test-logging.sh          # End-to-end logging check (API -> Elasticsearch)
+├── Dockerfile, docker-compose.yml   # App image and full stack (app, MySQL, ELK)
+├── Jenkinsfile, jenkins-arm/        # CI/CD pipeline and a Jenkins + JDK 17 image for ARM hosts
+└── sonar-project.properties         # SonarQube analysis settings
 ```
+**CI/CD pipeline (`Jenkinsfile`)**: `checkout` → `check java` → `clean` → `nohttp` (Checkstyle) → `install tools` and `npm install` (Node via `frontend-maven-plugin`) → `backend tests` / `frontend tests` (stages present, commands commented out) → `packaging` (`./mvnw verify -Pprod -DskipTests`, archives the JAR) → `publish docker` (`./mvnw jib:build` with the Jenkins credential `dockerhub-login-final`, pushes `tiagoweintraub/isa-final`).
 
-Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
+The pipeline was first tried on macOS (Apple Silicon), including the custom image in `jenkins-arm/`, and was finally run on Windows with the official `jenkins/jenkins` image:
 
-The `npm run` command will list all of the scripts available to run for this project.
+<img src="jenkins-win-build-success-2.png" alt="Jenkins job ISADockerFinal, last build successful" width="49%"> <img src="jenkins-win-build-success.png" alt="Jenkins console: image built and pushed, BUILD SUCCESS" width="49%">
 
-### PWA Support
+### Getting started
+**Prerequisites:** Java 17 and Docker. Node.js is optional: the Maven build downloads Node 16.17 / npm 8.19 locally (`./npmw` wraps them).
 
-JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
-
-The service worker initialization code is disabled by default. To enable it, uncomment the following code in `src/main/webapp/app/app.module.ts`:
-
-```typescript
-ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
+**Local development (H2 database)**
+```bash
+./mvnw       # builds the Angular app and starts Spring Boot (dev profile) on http://localhost:8080
+npm start    # optional: Angular dev server with live reload on http://localhost:9000
 ```
+Default JHipster users: `admin` / `admin` and `user` / `user`.
 
-### Managing dependencies
-
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
-
+**Full stack with Docker Compose (app + MySQL + ELK)**
+```bash
+./mvnw clean package -DskipTests   # builds target/expenses-0.0.1-SNAPSHOT.jar
+docker build -t expenses:latest .
+docker compose up                  # app :8080, MySQL :3306, Elasticsearch :9200, Logstash :5044, Kibana :5601
+docker compose down
 ```
-npm install --save --save-exact leaflet
+In Compose the app runs with the `prod,api-docs` profiles and sends its logs to Logstash. To check the logging pipeline end to end (needs `curl` and `jq`), run the script below, then open Kibana at http://localhost:5601.
+```bash
+bash scripts/test-logging.sh       # creates an expense via the API, then queries expenses-logs-* in Elasticsearch
 ```
-
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
-
-```
-npm install --save-dev --save-exact @types/leaflet
-```
-
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Edit [src/main/webapp/app/app.module.ts](src/main/webapp/app/app.module.ts) file:
-
-```
-import 'leaflet/dist/leaflet.js';
-```
-
-Edit [src/main/webapp/content/scss/vendor.scss](src/main/webapp/content/scss/vendor.scss) file:
-
-```
-@import '~leaflet/dist/leaflet.css';
-```
-
-Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-### Using Angular CLI
-
-You can also use [Angular CLI][] to generate some custom client code.
-
-For example, the following command:
-
-```
-ng generate component my-component
+**Published image** (pushed by the Jenkins pipeline, `linux/amd64`). It is built with the `prod` profile, so it needs a reachable MySQL database: point `SPRING_DATASOURCE_URL` at it, or swap `expenses:latest` for this image in `docker-compose.yml`.
+```bash
+docker pull tiagoweintraub/isa-final:latest
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL='jdbc:mysql://<host>:3306/expenses?createDatabaseIfNotExist=true' \
+  tiagoweintraub/isa-final:latest
 ```
 
-will generate few files:
-
+### Tests
+```bash
+./mvnw test -Dtest=ExpensesServiceTest   # custom service unit tests (Mockito)
+./mvnw verify                            # full backend suite: unit + integration tests
+npm test                                 # Jest tests for the Angular app (runs ESLint first)
+npx cypress open                         # Cypress, interactive mode
+npm run e2e:headless -- --spec "src/test/javascript/cypress/e2e/expenses-e2e-custom.cy.ts"
 ```
-create src/main/webapp/app/my-component/my-component.component.html
-create src/main/webapp/app/my-component/my-component.component.ts
-update src/main/webapp/app/app.module.ts
+- **`ExpensesServiceTest`**: saves a valid expense (checks the mapper → repository → mapper calls) and rejects a null or empty description: the `ConstraintViolationException` is propagated and no DTO is returned. Run a single case with `./mvnw test -Dtest=ExpensesServiceTest#shouldNotSaveExpenseWhenDescriptionIsNull`.
+- **`expenses-e2e-custom.cy.ts`**: logs in as admin, creates an expense through the form (expects `201`), deletes one from the list (expects `204`) and runs the full login → create → delete flow, removing any data it created.
+- Cypress expects the app on `http://localhost:8080`; `e2e:headless` waits for `/management/health` and runs in Chrome.
+- Integration tests use an embedded database by default; with `-Pprod` they run against a MySQL Testcontainer (needs Docker).
+- The JHipster-generated suites are kept as well: REST integration tests, ArchUnit layer checks, Jest component specs and Cypress account/admin/entity specs.
+- **SonarQube**: `docker compose -f src/main/docker/sonar.yml up -d`, then `./mvnw -Pprod clean verify sonar:sonar` (dashboard on http://localhost:9001).
+
+### Author
+**Tiago Weintraub**: [github.com/TiagoWeintraub](https://github.com/TiagoWeintraub)
+
+## Español
+
+### Sobre el proyecto
+Proyecto final de **Ingeniería de Software Aplicada** en la Universidad de Mendoza, Argentina (2025). La aplicación se generó con JHipster 7.9.3 a partir de un modelo JDL ([`expenses.jdl`](expenses.jdl)) y después se le sumó el tooling de entrega y calidad: tests unitarios y E2E propios, un stack de Docker Compose con MySQL y ELK, envío de logs en JSON a Logstash y un pipeline de Jenkins que compila la app y publica su imagen Docker en Docker Hub.
+
+### Funcionalidades
+- **CRUD de gastos**: descripción (obligatoria, máx. 200 caracteres), monto y fecha. API REST en `/api/expenses` (listado paginado, consulta, alta, modificación, modificación parcial, baja) y pantallas Angular de listado, detalle, alta/edición y baja.
+- **Autenticación JWT**: login, registro, activación de cuenta y reseteo de contraseña. `/api/admin/**` es solo para administradores; el resto de `/api/**` requiere un token válido.
+- **UI de administración**: gestión de usuarios, métricas, health, configuración, niveles de log y documentación Swagger de la API.
+- **Esquema versionado**: changelogs de Liquibase, con datos de ejemplo en el perfil `dev`.
+- **Logging centralizado**: logs JSON por TCP a Logstash, etiquetados con `log_type` (application / framework / database / system) e indexados por día en Elasticsearch (`expenses-logs-YYYY.MM.dd`), visibles en Kibana.
+- **Entrega en contenedores**: Dockerfile, stack de Docker Compose con healthchecks e imagen construida con Jib y publicada por Jenkins.
+
+### Tecnologías
+| Área | Tecnologías |
+|---|---|
+| Backend | Java 17, Spring Boot 2.7 (Web, Security, Data JPA), JWT, MapStruct, Ehcache, Liquibase, springdoc |
+| Frontend | Angular 14, TypeScript, Bootstrap 5 |
+| Base de datos | MySQL 8 (prod / Docker), H2 (dev) |
+| DevOps | Maven Wrapper, Docker, Docker Compose, Jib, Jenkins |
+| Observabilidad | Appender Logstash de Logback, Logstash, Elasticsearch, Kibana 7.17 |
+| Testing y calidad | JUnit 5, Mockito, AssertJ, ArchUnit, Testcontainers, Jest, Cypress, Checkstyle (nohttp), SonarQube |
+
+### Arquitectura / Estructura
 ```
-
-### JHipster Control Center
-
-JHipster Control Center can help you manage and control your application(s). You can start a local control center server (accessible on http://localhost:7419) with:
-
+Angular SPA ──JWT──> REST API (/api/expenses) ──> ExpensesService (DTO <-> entity, MapStruct) ──> JPA ──> MySQL / H2
+Logback (JSON over TCP) ──> Logstash :5044 ──> Elasticsearch :9200 ──> Kibana :5601
 ```
-docker-compose -f src/main/docker/jhipster-control-center.yml up
 ```
-
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the Expenses application for production, run:
-
+├── expenses.jdl                     # JDL domain model (entity, DTO, service, pagination)
+├── src/main/java/.../expenses/      # Spring Boot: domain, repository, service, web/rest, security/jwt
+├── src/main/webapp/app/             # Angular SPA (entities/expenses, admin, account)
+├── src/main/resources/              # Spring profiles, Liquibase changelogs, logback-spring-elk.xml
+├── src/main/docker/logstash/        # Logstash settings and pipeline
+├── src/test/                        # JUnit tests (incl. ExpensesServiceTest) and Cypress specs
+├── scripts/test-logging.sh          # End-to-end logging check (API -> Elasticsearch)
+├── Dockerfile, docker-compose.yml   # App image and full stack (app, MySQL, ELK)
+├── Jenkinsfile, jenkins-arm/        # CI/CD pipeline and a Jenkins + JDK 17 image for ARM hosts
+└── sonar-project.properties         # SonarQube analysis settings
 ```
-./mvnw -Pprod clean verify
+**Pipeline CI/CD (`Jenkinsfile`)**: `checkout` → `check java` → `clean` → `nohttp` (Checkstyle) → `install tools` y `npm install` (Node vía `frontend-maven-plugin`) → `backend tests` / `frontend tests` (etapas presentes, comandos comentados) → `packaging` (`./mvnw verify -Pprod -DskipTests`, archiva el JAR) → `publish docker` (`./mvnw jib:build` con la credencial de Jenkins `dockerhub-login-final`, publica `tiagoweintraub/isa-final`).
+
+El pipeline se probó primero en macOS (Apple Silicon), incluida la imagen propia de `jenkins-arm/`, y finalmente se ejecutó en Windows con la imagen oficial `jenkins/jenkins`:
+
+<img src="jenkins-win-build-success-2.png" alt="Job de Jenkins ISADockerFinal, último build exitoso" width="49%"> <img src="jenkins-win-build-success.png" alt="Consola de Jenkins: imagen construida y publicada, BUILD SUCCESS" width="49%">
+
+### Cómo usarlo
+**Requisitos:** Java 17 y Docker. Node.js es opcional: el build de Maven descarga Node 16.17 / npm 8.19 localmente (`./npmw` los envuelve).
+
+**Desarrollo local (base H2)**
+```bash
+./mvnw       # builds the Angular app and starts Spring Boot (dev profile) on http://localhost:8080
+npm start    # optional: Angular dev server with live reload on http://localhost:9000
 ```
+Usuarios por defecto de JHipster: `admin` / `admin` y `user` / `user`.
 
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
-
+**Stack completo con Docker Compose (app + MySQL + ELK)**
+```bash
+./mvnw clean package -DskipTests   # builds target/expenses-0.0.1-SNAPSHOT.jar
+docker build -t expenses:latest .
+docker compose up                  # app :8080, MySQL :3306, Elasticsearch :9200, Logstash :5044, Kibana :5601
+docker compose down
 ```
-java -jar target/*.jar
+En Compose la app corre con los perfiles `prod,api-docs` y envía sus logs a Logstash. Para verificar el pipeline de logging de punta a punta (requiere `curl` y `jq`), correr el script y después abrir Kibana en http://localhost:5601.
+```bash
+bash scripts/test-logging.sh       # creates an expense via the API, then queries expenses-logs-* in Elasticsearch
 ```
-
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
-
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-```
-./mvnw -Pprod,war clean verify
-```
-
-## Testing
-
-To launch your application's tests, run:
-
-```
-./mvnw verify
-```
-
-### Client tests
-
-Unit tests are run by [Jest][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
-
-```
-npm test
-```
-
-UI end-to-end tests are powered by [Cypress][]. They're located in [src/test/javascript/cypress](src/test/javascript/cypress)
-and can be run by starting Spring Boot in one terminal (`./mvnw spring-boot:run`) and running the tests (`npm run e2e`) in a second one.
-
-#### Lighthouse audits
-
-You can execute automated [lighthouse audits][https://developers.google.com/web/tools/lighthouse/] with [cypress audits][https://github.com/mfrachet/cypress-audit] by running `npm run e2e:cypress:audits`.
-You should only run the audits when your application is packaged with the production profile.
-The lighthouse report is created in `target/cypress/lhreport.html`
-
-For more information, refer to the [Running tests page][].
-
-### Code quality
-
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
-
-```
-docker-compose -f src/main/docker/sonar.yml up -d
-```
-
-Note: we have turned off authentication in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
-
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
-
-Then, run a Sonar analysis:
-
-```
-./mvnw -Pprod clean verify sonar:sonar
-```
-
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
-
-```
-./mvnw initialize sonar:sonar
+**Imagen publicada** (subida por el pipeline de Jenkins, `linux/amd64`). Se construye con el perfil `prod`, así que necesita una base MySQL accesible: apuntá `SPRING_DATASOURCE_URL` a ella, o reemplazá `expenses:latest` por esta imagen en `docker-compose.yml`.
+```bash
+docker pull tiagoweintraub/isa-final:latest
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL='jdbc:mysql://<host>:3306/expenses?createDatabaseIfNotExist=true' \
+  tiagoweintraub/isa-final:latest
 ```
 
-For more information, refer to the [Code quality page][].
-
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a mysql database in a docker container, run:
-
+### Tests
+```bash
+./mvnw test -Dtest=ExpensesServiceTest   # custom service unit tests (Mockito)
+./mvnw verify                            # full backend suite: unit + integration tests
+npm test                                 # Jest tests for the Angular app (runs ESLint first)
+npx cypress open                         # Cypress, interactive mode
+npm run e2e:headless -- --spec "src/test/javascript/cypress/e2e/expenses-e2e-custom.cy.ts"
 ```
-docker-compose -f src/main/docker/mysql.yml up -d
-```
+- **`ExpensesServiceTest`**: guarda un gasto válido (verifica las llamadas mapper → repository → mapper) y rechaza una descripción nula o vacía: la `ConstraintViolationException` se propaga y no se devuelve ningún DTO. Para un caso puntual: `./mvnw test -Dtest=ExpensesServiceTest#shouldNotSaveExpenseWhenDescriptionIsNull`.
+- **`expenses-e2e-custom.cy.ts`**: hace login como admin, crea un gasto desde el formulario (espera `201`), elimina uno desde el listado (espera `204`) y recorre el flujo completo login → alta → baja, limpiando los datos que crea.
+- Cypress espera la app en `http://localhost:8080`; `e2e:headless` espera a `/management/health` y corre en Chrome.
+- Los tests de integración usan una base embebida por defecto; con `-Pprod` corren contra un Testcontainer de MySQL (requiere Docker).
+- Se conservan también los tests generados por JHipster: integración de la API REST, reglas de capas con ArchUnit, specs de componentes con Jest y specs de Cypress de cuenta, administración y entidad.
+- **SonarQube**: `docker compose -f src/main/docker/sonar.yml up -d` y luego `./mvnw -Pprod clean verify sonar:sonar` (dashboard en http://localhost:9001).
 
-To stop it and remove the container, run:
-
-```
-docker-compose -f src/main/docker/mysql.yml down
-```
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-```
-npm run java:docker
-```
-
-Or build a arm64 docker image when using an arm64 processor os like MacOS with M1 processor family running:
-
-```
-npm run java:docker:arm64
-```
-
-Then run:
-
-```
-docker-compose -f src/main/docker/app.yml up -d
-```
-
-When running Docker Desktop on MacOS Big Sur or later, consider enabling experimental `Use the new Virtualization framework` for better processing performance ([disk access performance is worse](https://github.com/docker/roadmap/issues/7)).
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 7.9.3 archive]: https://www.jhipster.tech/documentation-archive/v7.9.3
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.9.3/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v7.9.3/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v7.9.3/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v7.9.3/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v7.9.3/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v7.9.3/setting-up-ci/
-[node.js]: https://nodejs.org/
-[npm]: https://www.npmjs.com/
-[webpack]: https://webpack.github.io/
-[browsersync]: https://www.browsersync.io/
-[jest]: https://facebook.github.io/jest/
-[cypress]: https://www.cypress.io/
-[leaflet]: https://leafletjs.com/
-[definitelytyped]: https://definitelytyped.org/
-[angular cli]: https://cli.angular.io/
+### Autor
+**Tiago Weintraub**: [github.com/TiagoWeintraub](https://github.com/TiagoWeintraub)
